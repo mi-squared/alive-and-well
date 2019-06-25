@@ -35,6 +35,7 @@ $ORDERHASH = array(
   'pubpid'  => 'lower(p.pubpid), fe.date',
   'time'    => 'fe.date, lower(u.lname), lower(u.fname)',
   'encounter'    => 'fe.encounter, fe.date, lower(u.lname), lower(u.fname)',
+  'empl_list' => 'p.empl_list, lower(u.lname), lower(u.fname), fe.date '
 );
 
 function bucks($amount)
@@ -63,6 +64,7 @@ $form_new_patients = $_POST['form_new_patients'] ? true : false;
 $form_esigned = $_POST['form_esigned'] ? true : false;
 $form_not_esigned = $_POST['form_not_esigned'] ? true : false;
 $form_encounter_esigned = $_POST['form_encounter_esigned'] ? true : false;
+$form_employer = $_POST['empl_list'] ;
 
 $form_orderby = $ORDERHASH[$_REQUEST['form_orderby']] ?
 $_REQUEST['form_orderby'] : 'doctor';
@@ -93,11 +95,12 @@ $query = "SELECT " .
   "fe.encounter, fe.date, fe.reason, " .
   "f.formdir, f.form_name, " .
   "p.fname, p.mname, p.lname, p.pid, p.pubpid, " .
-  "u.lname AS ulname, u.fname AS ufname, u.mname AS umname " .
+  "u.lname AS ulname, u.fname AS ufname, u.mname AS umname, p.empl_list " .
   "$esign_fields" .
   "FROM ( form_encounter AS fe, forms AS f ) " .
   "LEFT OUTER JOIN patient_data AS p ON p.pid = fe.pid " .
   "LEFT JOIN users AS u ON u.id = fe.provider_id " .
+
   "$esign_joins" .
   "WHERE f.pid = fe.pid AND f.encounter = fe.encounter AND f.formdir = 'newpatient' ";
 if ($form_to_date) {
@@ -132,6 +135,11 @@ if ($form_esigned) {
 
 if ($form_not_esigned) {
     $query .= "AND es.tid IS NULL ";
+}
+
+if ($form_employer) {
+    $query .= "AND p.empl_list = ? ";
+    array_push($sqlBindArray, $form_employer);
 }
 
 $query .= "ORDER BY $orderby";
@@ -268,6 +276,21 @@ $res = sqlStatement($query, $sqlBindArray);
                <input type='text' class='datepicker form-control' name='form_to_date' id="form_to_date" size='10' value='<?php echo attr(oeFormatShortDate($form_to_date)); ?>'>
             </td>
         </tr>
+        <tr>
+
+            <td class='control-label'>
+                <?php echo xlt('Employer'); ?>:
+            </td>
+
+            <td align="left"><?php	echo generate_select_list("empl_list", "Employer_Organization", "", "empl_list");?></td>
+
+
+        </tr>
+
+
+
+
+        </tr>
     <tr>
       <td></td>
       <td>
@@ -349,6 +372,10 @@ if ($_POST['form_refresh'] || $_POST['form_orderby']) {
    <a href="nojs.php" onclick="return dosort('pubpid')"
     <?php echo ($form_orderby == "pubpid") ? " style=\"color:#00cc00\"" : ""; ?>><?php echo xlt('ID'); ?></a>
   </th>
+    <th>
+        <a href="nojs.php" onclick="return dosort('empl_list')"
+            <?php echo ($form_orderby == "empl_list") ? " style=\"color:#00cc00\"" : ""; ?>><?php echo xlt('Employer'); ?></a>
+    </th>
   <th>
     <?php echo xlt('Status'); ?>
   </th>
@@ -468,6 +495,9 @@ if ($res) {
   <td>
         <?php echo text($row['pubpid']); ?>&nbsp;
   </td>
+    <td>
+       <?php echo text($row['empl_list']); ?>&nbsp;
+    </td>
   <td>
         <?php echo text($status); ?>&nbsp;
   </td>
