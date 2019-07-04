@@ -59,7 +59,13 @@ $form_from_date = (isset($_POST['form_from_date'])) ? DateToYYYYMMDD($_POST['for
 $form_to_date   = (isset($_POST['form_to_date'])) ? DateToYYYYMMDD($_POST['form_to_date']) : date('Y-m-d');
 $form_provider  = $_POST['form_provider'];
 $form_facility  = $_POST['form_facility'];
-$form_details   = $_POST['form_details'] ? true : false;
+if (!isset($_POST['form_details'])) {
+    $form_details = true; // On by default
+} else if ($_POST['form_details'] == 'on') {
+    $form_details = true;
+} else {
+    $form_details = false;
+}
 $form_new_patients = $_POST['form_new_patients'] ? true : false;
 $form_esigned = $_POST['form_esigned'] ? true : false;
 $form_not_esigned = $_POST['form_not_esigned'] ? true : false;
@@ -282,7 +288,7 @@ $res = sqlStatement($query, $sqlBindArray);
                 <?php echo xlt('Employer'); ?>:
             </td>
 
-            <td align="left"><?php	echo generate_select_list("empl_list", "Employer_Organization", "", "empl_list");?></td>
+            <td align="left"><?php	echo generate_select_list("empl_list", "Employer_Organization", $form_employer, "empl_list");?></td>
 
 
         </tr>
@@ -295,7 +301,7 @@ $res = sqlStatement($query, $sqlBindArray);
       <td></td>
       <td>
         <div class="checkbox">
-          <label><input type='checkbox' name='form_details'<?php echo ($form_details) ? ' checked' : ''; ?>>
+          <label><input type='checkbox' name='form_details'<?php echo ($form_details === true) ? ' checked' : ''; ?>>
             <?php echo xlt('Details'); ?></label>
         </div>
         <div class="checkbox">
