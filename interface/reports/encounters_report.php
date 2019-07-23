@@ -101,11 +101,12 @@ $query = "SELECT " .
   "fe.encounter, fe.date, fe.reason, p.title, ope.pc_catname,  " .
   "f.formdir, f.form_name, " .
   "p.fname, p.mname, p.lname, p.pid, p.pubpid, " .
-  "u.lname AS ulname, u.fname AS ufname, u.mname AS umname, p.empl_list " .
+  "u.lname AS ulname, u.fname AS ufname, u.mname AS umname, p.empl_list, L.title as employer_title " .
   "$esign_fields" .
   "FROM ( form_encounter AS fe, forms AS f ) " .
   "LEFT OUTER JOIN patient_data AS p ON p.pid = fe.pid " .
   "LEFT JOIN users AS u ON u.id = fe.provider_id " .
+  "LEFT OUTER JOIN list_options AS L on p.empl_list = L.option_id AND L.list_id = 'Employer_Organization' " .
   "join openemr_postcalendar_categories ope on ope.pc_catid = fe.pc_catid " .
 
   "$esign_joins" .
@@ -496,7 +497,7 @@ if ($res) {
         <?php echo text($row['title']); ?>&nbsp;
   </td>
     <td>
-       <?php echo text($row['empl_list']); ?>&nbsp;
+       <?php echo text($row['employer_title']); ?>&nbsp;
     </td>
 
   <td>
