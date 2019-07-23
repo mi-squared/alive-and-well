@@ -98,14 +98,16 @@ if ($form_not_esigned) {
 $sqlBindArray = array();
 
 $query = "SELECT " .
-  "fe.encounter, fe.date, fe.reason, " .
+  "fe.encounter, fe.date, fe.reason, p.title, ope.pc_catname,  " .
   "f.formdir, f.form_name, " .
   "p.fname, p.mname, p.lname, p.pid, p.pubpid, " .
-  "u.lname AS ulname, u.fname AS ufname, u.mname AS umname, p.empl_list " .
+  "u.lname AS ulname, u.fname AS ufname, u.mname AS umname, p.empl_list, L.title as employer_title " .
   "$esign_fields" .
   "FROM ( form_encounter AS fe, forms AS f ) " .
   "LEFT OUTER JOIN patient_data AS p ON p.pid = fe.pid " .
   "LEFT JOIN users AS u ON u.id = fe.provider_id " .
+  "LEFT OUTER JOIN list_options AS L on p.empl_list = L.option_id AND L.list_id = 'Employer_Organization' " .
+  "join openemr_postcalendar_categories ope on ope.pc_catid = fe.pc_catid " .
 
   "$esign_joins" .
   "WHERE f.pid = fe.pid AND f.encounter = fe.encounter AND f.formdir = 'newpatient' ";
@@ -376,28 +378,21 @@ if ($_POST['form_refresh'] || $_POST['form_orderby']) {
   </th>
   <th>
    <a href="nojs.php" onclick="return dosort('pubpid')"
-    <?php echo ($form_orderby == "pubpid") ? " style=\"color:#00cc00\"" : ""; ?>><?php echo xlt('ID'); ?></a>
+    <?php echo ($form_orderby == "pubpid") ? " style=\"color:#00cc00\"" : ""; ?>><?php echo xlt('Title'); ?></a>
   </th>
     <th>
         <a href="nojs.php" onclick="return dosort('empl_list')"
             <?php echo ($form_orderby == "empl_list") ? " style=\"color:#00cc00\"" : ""; ?>><?php echo xlt('Employer'); ?></a>
     </th>
+
   <th>
-    <?php echo xlt('Status'); ?>
+    <?php echo xlt('Encounter Type'); ?>
   </th>
-  <th>
-    <?php echo xlt('Encounter'); ?>
-  </th>
-  <th>
-   <a href="nojs.php" onclick="return dosort('encounter')"
-    <?php echo ($form_orderby == "encounter") ? " style=\"color:#00cc00\"" : ""; ?>><?php echo xlt('Encounter Number'); ?></a>
-  </th>
+
   <th>
     <?php echo xlt('Form'); ?>
   </th>
-  <th>
-    <?php echo xlt('Coding'); ?>
-  </th>
+
 <?php } else { ?>
   <th><?php echo xlt('Provider'); ?></td>
   <th><?php echo xlt('Encounters'); ?></td>
@@ -499,26 +494,20 @@ if ($res) {
         <?php echo text($row['lname'] . ', ' . $row['fname'] . ' ' . $row['mname']); ?>&nbsp;
   </td>
   <td>
-        <?php echo text($row['pubpid']); ?>&nbsp;
+        <?php echo text($row['title']); ?>&nbsp;
   </td>
     <td>
-       <?php echo text($row['empl_list']); ?>&nbsp;
+       <?php echo text($row['employer_title']); ?>&nbsp;
     </td>
+
   <td>
-        <?php echo text($status); ?>&nbsp;
+        <?php echo text($row['pc_catname']); ?>&nbsp;
   </td>
-  <td>
-        <?php echo text($row['reason']); ?>&nbsp;
-  </td>
-   <td>
-        <?php echo text($row['encounter']); ?>&nbsp;
-  </td>
+
   <td>
         <?php echo $encnames; //since this variable contains html, have already html escaped it above ?>&nbsp;
   </td>
-  <td>
-        <?php echo text($coded); ?>
-  </td>
+ 
  </tr>
 <?php
         } else {
