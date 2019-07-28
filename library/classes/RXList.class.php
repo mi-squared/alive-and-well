@@ -70,9 +70,23 @@ class RxList
 
     function get_list($query)
     {
-        $page = RxList::getPage($query);
-        $tokens = RxList::parse2tokens($page);
-        $hash = RxList::tokens2hash($tokens);
+//        $page = RxList::getPage($query);
+//        $tokens = RxList::parse2tokens($page);
+//        $hash = RxList::tokens2hash($tokens);
+        //override the rxnav as requested by MI2
+        $sql = "SELECT R1.RXCUI as rxcui, R1.STR as name, R2.STR as 'synonym' FROM `RXNCONSO` " .
+                " R1 left join RXNCONSO R2 on R1.RXCUI = R2.RXCUI and R2.TTY = 'SY' where R1.SAB = 'RXNORM' and R2.STR  ".
+                " is not null and (R1.STR like '%$query%' or R2.STR like '%$query%') group by R1.STR, R2.STR" ;
+        $query = sqlStatement($sql);
+
+        //we are changing the query to include the custom query
+        $hash = array();
+        while ($row = sqlFetchArray($query)){
+
+            array_push($hash, $row);
+        }
+
+
         foreach ($hash as $index => $data) {
             unset($my_data);
             foreach ($data as $k => $v) {
