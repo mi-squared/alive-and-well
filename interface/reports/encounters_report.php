@@ -485,7 +485,7 @@ if ($res) {
         ?>
        <tr bgcolor='<?php echo $bgcolor ?>'>
   <td>
-        <?php echo ($docname == $lastdocname) ? "" : text($docname) ?>&nbsp;
+        <?php echo ($docname == $lastdocname && $form_details == false) ? "" : text($docname) ?>&nbsp;
   </td>
   <td>
         <?php echo text(oeFormatShortDate(substr($row['date'], 0, 10))) ?>&nbsp;
