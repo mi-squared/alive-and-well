@@ -10,6 +10,13 @@
 
 @import "themeBuilder.php";
 
+/*
+KCC for Alive and Well, custom indicator in demographics
+*/
+#text_memb_status[data-value="NO"] {
+    color: red;
+}
+
 @font-face {
     font-family: "FontAwesome";
     src: url("../../public/assets/font-awesome-4-6-3/fonts/fontawesome-webfont.ttf") format("truetype");
