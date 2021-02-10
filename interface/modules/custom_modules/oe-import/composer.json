@@ -1,0 +1,17 @@
+{
+    "name": "mi-squared/oe-import",
+    "description": "Template for creating custom modules.",
+    "type": "openemr-module",
+    "authors": [
+        {
+            "name": "Ken Chapple",
+            "email": "ken@mi-squared.com"
+        }
+    ],
+    "require": {
+        "mi-squared/mi-framework": "^0.1.0"
+    },
+    "autoload": {
+        "psr-4": {"Mi2\\Import\\": "src/"}
+    }
+}

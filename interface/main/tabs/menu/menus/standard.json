@@ -740,6 +740,18 @@
           "super"
         ]
       },
+        {
+            "label": "Import",
+            "menu_id": "import0",
+            "target": "import",
+            "url": "/interface/modules/custom_modules/oe-import/index.php?action=import!import",
+            "children": [],
+            "requirement": 0,
+            "acl_req": [
+                "admin",
+                "super"
+            ]
+        },
       {
         "label": "Facilities",
         "menu_id": "adm0",
