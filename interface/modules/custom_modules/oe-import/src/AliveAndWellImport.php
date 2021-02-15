@@ -51,6 +51,23 @@ class AliveAndWellImport implements ImportsInterface
 
     }
 
+    public function remove_utf8_bom($text)
+    {
+        $bom = pack('H*','EFBBBF');
+        $text = preg_replace("/^$bom/", '', $text);
+        return $text;
+    }
+
+    public function escape_column_data()
+    {
+        $escaped = [];
+        foreach ($this->columns as $column) {
+            $column = $this->remove_utf8_bom($column);
+            $escaped[] = $column;
+        }
+        $this->columns = $escaped;
+    }
+
     public function setup($batch)
     {
         $this->batch_id = $batch['id'];
@@ -60,6 +77,7 @@ class AliveAndWellImport implements ImportsInterface
 
         //read a line
         $this->columns = fgetcsv($this->fh_source, 0 , ',');
+        $this->escape_column_data();
     }
 
     public function validateUploadFile($file)
@@ -68,6 +86,7 @@ class AliveAndWellImport implements ImportsInterface
 
         //read a line
         $this->columns = fgetcsv($this->fh_source, 0 , ',');
+        $this->escape_column_data();
 
         return $this->validate();
     }
