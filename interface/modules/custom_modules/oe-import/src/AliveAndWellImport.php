@@ -114,6 +114,12 @@ class AliveAndWellImport implements ImportsInterface
 
             //read a line
             $line = fgetcsv($this->fh_source, 0 , ',');
+
+            // make sure the line has data
+            if (false === $line) {
+                continue;
+            }
+
             // Create an assoc array with the keys bing the column headers of the sheet
             $patient_data = array_combine($this->columns, $line);
             // If we have an existing patient, update. Otherwise create.
