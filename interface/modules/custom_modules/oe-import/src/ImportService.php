@@ -61,6 +61,9 @@ class ImportService
                 'start_datetime' => date('Y-m-d H:i:s')
             ]);
 
+            // Reset validation messages for each batch
+            $this->validationMessages = [];
+
             // if the file is an image, run the image importer, if it's a csv run patient importer
             $importer = self::makeImporter($batch['filename']);
 
