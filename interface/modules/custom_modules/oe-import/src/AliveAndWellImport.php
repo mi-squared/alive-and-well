@@ -42,7 +42,7 @@ class AliveAndWellImport implements ImportsInterface
         "IUA" => "awc_iua",
         "Organization Name" => "empl_list",
         "Area Provider" => "providerlsID",
-        "Contact ID" => null, // Ignored
+        "Contact ID" => "pubpid",
         "Alive & Well Start Date" => null // Ignored
     ];
 
@@ -315,7 +315,6 @@ class AliveAndWellImport implements ImportsInterface
             if ($result['pid'] > 1) {
                 $newpid = $result['pid'];
             }
-            $new['pubpid'] = $newpid;
 
             $sql = "INSERT INTO patient_data SET pid = '" . add_escape_custom($newpid) . "', date = NOW()";
             foreach ($new as $key => $value) {
