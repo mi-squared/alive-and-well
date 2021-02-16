@@ -220,23 +220,34 @@ class AliveAndWellImport implements ImportsInterface
     public function importPatient(array $patient_data)
     {
         $mapped_data = $this->mapData($patient_data);
+        $pubpid_check = "";
+        if ($mapped_data['pubpid']) {
+            $pubpid_check = "(pubpid = ?) OR";
+        }
 
         // Try to match ContactID, or Fname/Lname/DOB
         $findPatient = "SELECT fname, lname, pubpid, pid
             FROM patient_data
-            WHERE (pubpid = ? ) OR (fname = ? AND lname = ? AND DOB = ?)
+            WHERE $pubpid_check (fname = ? AND lname = ? AND DOB = ?)
             ORDER BY `date` DESC
             LIMIT 1";
-        $result = sqlQuery($findPatient, [
-            $mapped_data['pubpid'],
-            $mapped_data['fname'],
-            $mapped_data['lname'],
-            $mapped_data['DOB']
-        ]);
+
+        // Only put the pubpid in the binds array if we have the check for it
+        $binds = [];
+        if ($pubpid_check) {
+            $binds[] = $mapped_data['pubpid'];
+        }
+        $binds[] = $mapped_data['fname'];
+        $binds[] = $mapped_data['lname'];
+        $binds[] = $mapped_data['DOB'];
+        $result = sqlQuery($findPatient, $binds);
         $pid = null;
         if ($result !== false) {
             // We found a patient, so use that
             $pid = $result['pid'];
+        } else {
+            $patient_name = $mapped_data['fname'] . " " . $mapped_data['lname'];
+            $this->validation_messages[] = "No match found for `$patient_name`";
         }
 
         $return = null;
