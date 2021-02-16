@@ -221,12 +221,18 @@ class AliveAndWellImport implements ImportsInterface
     {
         $mapped_data = $this->mapData($patient_data);
 
+        // Try to match ContactID, or Fname/Lname/DOB
         $findPatient = "SELECT fname, lname, pubpid, pid
             FROM patient_data
-            WHERE fname = ? AND lname = ? AND DOB = ?
+            WHERE (pubpid = ? ) OR (fname = ? AND lname = ? AND DOB = ?)
             ORDER BY `date` DESC
             LIMIT 1";
-        $result = sqlQuery($findPatient, [$mapped_data['fname'], $mapped_data['lname'], $mapped_data['DOB']]);
+        $result = sqlQuery($findPatient, [
+            $mapped_data['pubpid'],
+            $mapped_data['fname'],
+            $mapped_data['lname'],
+            $mapped_data['DOB']
+        ]);
         $pid = null;
         if ($result !== false) {
             // We found a patient, so use that
