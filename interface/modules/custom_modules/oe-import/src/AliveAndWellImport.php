@@ -254,6 +254,9 @@ class AliveAndWellImport implements ImportsInterface
         if ($pid === null) {
             $return = $this->updatePatientData(null, $mapped_data, true);
         } else {
+            if ($pubpid_check) {
+                unset($mapped_data['pubpid']);
+            }
             $return = $this->updatePatientData($pid, $mapped_data);
         }
 
