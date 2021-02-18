@@ -33,6 +33,9 @@ class AliveAndWellAttachPhoto implements ImportsInterface
         $lname = $parts[0];
         $fname = $parts[1];
         $dob = $parts[2];
+        $dob =
+        $time = strtotime($dob);
+        $dob = date('Y-m-d', $time);
         $findPatient = "SELECT fname, lname, pubpid, pid FROM patient_data WHERE fname = ? AND lname = ? AND DOB = ?";
         $result = sqlStatement($findPatient, [$fname, $lname, $dob]);
         if ($result) {

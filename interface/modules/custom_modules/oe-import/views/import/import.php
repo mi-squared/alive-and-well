@@ -84,7 +84,7 @@ use OpenEMR\Core\Header;
 </div>
 </body>
 <script type="text/javascript">
-    $("#mymaintable").DataTable({
+    var batch_table = $("#mymaintable").DataTable({
         "scrollX": true,
         dom: 'frtip',
         "processing": true,
@@ -145,5 +145,9 @@ use OpenEMR\Core\Header;
         ],
         "order": [[0, 'desc']]
     });
+
+    setInterval(function() {
+        batch_table.ajax.reload( null, false );
+    }, 3000);
 </script>
 </html>
