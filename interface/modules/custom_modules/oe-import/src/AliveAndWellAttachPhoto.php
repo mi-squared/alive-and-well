@@ -85,8 +85,12 @@ class AliveAndWellAttachPhoto implements ImportsInterface
         }
 
         // Make sure DOB is correct format
-        if (strlen($parts[2]) != 10) {
-            $this->validation_messages[] = "The DOB in the image has an invalid format (YYYY-MM-DD).";
+        $dob = $parts[2];
+        $time = strtotime($dob);
+        $formatted_dob = date('Y-m-d', $time);
+        if ($time == -1 ||
+            strlen($formatted_dob) != 10) {
+            $this->validation_messages[] = "The DOB in the image has an invalid format";
             return false;
         }
 
