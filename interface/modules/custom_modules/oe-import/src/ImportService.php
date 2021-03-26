@@ -171,7 +171,8 @@ class ImportService
 
         // Create the file with the current date timestamp
         $parts = pathinfo($this->file['name']);
-        $filepath = $directory . DIRECTORY_SEPARATOR . date("Ymdhi") . "." . $parts['extension'];
+        $date = \DateTime::createFromFormat('U.u', microtime(TRUE));
+        $filepath = $directory . DIRECTORY_SEPARATOR . $date->format("Ymdhisu") . "." . $parts['extension'];
         if (false === move_uploaded_file($this->file['tmp_name'], $filepath)) {
             $this->validationMessages[]= xl('Unable to move uploaded file');
             return false;
